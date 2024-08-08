@@ -1,0 +1,21 @@
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/Server.js",
+  "scripts": {
+    "start": "node server/Server.js",
+    "dev": "nodemon server/Server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "dependencies": {
+    "shortid": "^2.2.16",
+    "socket.io": "^4.7.5"
+  }
+}
