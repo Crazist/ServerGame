@@ -1,5 +1,7 @@
 const WebSocket = require(`ws`);
 const Player = require(`./Classes/Player.js`);
+const eventBus = require('./Utils/EventBus');
+const playerModule = require('./Modules/PlayerModule.js');
 const { createMessage } = require(`./Utils/messageUtils.js`)
 
 const port = process.env.PORT || 52300;
@@ -30,9 +32,16 @@ wss.on('connection', (ws) => {
 	}
 
 	ws.on('message', (message) => {
-		console.log('Received:', message);
-		// Здесь можно добавить обработку сообщений
+		try {
+			let parsedMessage = JSON.parse(message);
+			let parsedData = JSON.parse(parsedMessage.Data);
+			
+			eventBus.emit(parsedMessage.Type, parsedData);
+		} catch (error) {
+			console.error('Failed to parse message:', error);
+		}
 	});
+
 
 	ws.on('close', () => {
 		console.log('A player has disconnected');

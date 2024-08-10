@@ -1,3 +1,5 @@
+using Data;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEngine;
@@ -36,8 +38,14 @@ public class WebSocketTextHandler : MonoBehaviour
 
     private void SendMessageToServer()
     {
-        string messageToSend = _inputField.text;
-        WebSocketEventDispatcher.Instance.SendMessageToServer("textMessage", messageToSend);
-        Debug.Log("Sent message: " + messageToSend);
+        MessageData messageToSend = new MessageData
+        {
+            Input = _inputField.text,
+            Rofl = 11
+        };
+
+        WebSocketEventDispatcher.Instance.SendMessageToServer("register", messageToSend);
+        Debug.Log("Sent message: " + JsonConvert.SerializeObject(messageToSend));
     }
+
 }

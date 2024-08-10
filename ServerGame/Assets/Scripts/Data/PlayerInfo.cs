@@ -1,4 +1,7 @@
-public class PlayerInfo
+namespace Data
 {
-    public string Id;
+    public class PlayerInfo
+    {
+        public string Id;
+    }
 }

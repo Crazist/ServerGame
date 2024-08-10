@@ -60,8 +60,10 @@ public class WebSocketEventDispatcher : MonoBehaviour
 
     public void SendMessageToServer(string eventType, object data)
     {
-        var jsonData = JObject.FromObject(data);
-        var message = new ClientMessage { Type = eventType, Data = jsonData };
+        string jsonData = JsonConvert.SerializeObject(data);
+    
+        var message = new ClientMessage<object> { Type = eventType, Data = jsonData };
+    
         string jsonMessage = JsonConvert.SerializeObject(message);
         _ws.Send(jsonMessage);
     }
