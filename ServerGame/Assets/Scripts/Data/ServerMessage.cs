@@ -3,9 +3,9 @@ using System;
 namespace Data
 {
     [Serializable]
-    public class ServerMessage
+    public class ServerMessage<T>
     {
         public string Type;
-        public object Data;
+        public T Data;
     }
 }

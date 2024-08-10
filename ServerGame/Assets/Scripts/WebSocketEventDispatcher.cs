@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using Data;
 using UnityEngine;
 using WebSocketSharp;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public class WebSocketEventDispatcher : MonoBehaviour
 {
-    private Dictionary<string, Action<object>> _eventHandlers = new Dictionary<string, Action<object>>();
+    private Dictionary<string, Action<JObject>> _eventHandlers = new Dictionary<string, Action<JObject>>();
     private WebSocket _ws;
 
     private static WebSocketEventDispatcher instance;
@@ -36,7 +38,7 @@ public class WebSocketEventDispatcher : MonoBehaviour
 
     public void OnDestroy() => _ws?.Close();
 
-    public void RegisterHandler(string eventType, Action<object> handler)
+    public void RegisterHandler(string eventType, Action<JObject> handler)
     {
         if (!_eventHandlers.ContainsKey(eventType))
         {
@@ -48,7 +50,7 @@ public class WebSocketEventDispatcher : MonoBehaviour
         }
     }
 
-    public void UnregisterHandler(string eventType, Action<object> handler)
+    public void UnregisterHandler(string eventType, Action<JObject> handler)
     {
         if (_eventHandlers.ContainsKey(eventType))
         {
@@ -58,17 +60,19 @@ public class WebSocketEventDispatcher : MonoBehaviour
 
     public void SendMessageToServer(string eventType, object data)
     {
-        var message = new ClientMessage { Type = eventType, Data = data };
-        _ws.Send(JsonUtility.ToJson(message));
+        var jsonData = JObject.FromObject(data);
+        var message = new ClientMessage { Type = eventType, Data = jsonData };
+        string jsonMessage = JsonConvert.SerializeObject(message);
+        _ws.Send(jsonMessage);
     }
 
     private void OnMessageReceived(object sender, MessageEventArgs e)
     {
         Debug.Log("Received raw data: " + e.Data);
-        var message = JsonUtility.FromJson<ServerMessage>(e.Data);
-        if (_eventHandlers.ContainsKey(message.Type))
+        var message = JsonConvert.DeserializeObject<ServerMessage<JObject>>(e.Data);
+        if (message != null && _eventHandlers.ContainsKey(message.Type))
         {
-            _eventHandlers[message.Type].Invoke(message.Data);
+            _eventHandlers[message.Type]?.Invoke(message.Data);
         }
     }
 }
