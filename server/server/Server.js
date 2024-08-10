@@ -3,7 +3,7 @@ const Player = require(`./Classes/Player.js`);
 const { createMessage } = require(`./Utils/messageUtils.js`)
 
 const port = process.env.PORT || 52300;
-const wss = new WebSocket.WebSocket({ port });
+const wss = new WebSocket.Server({ port });
 
 let players = {};
 let sockets = {};

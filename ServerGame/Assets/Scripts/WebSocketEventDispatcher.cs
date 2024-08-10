@@ -64,6 +64,7 @@ public class WebSocketEventDispatcher : MonoBehaviour
 
     private void OnMessageReceived(object sender, MessageEventArgs e)
     {
+        Debug.Log("Received raw data: " + e.Data);
         var message = JsonUtility.FromJson<ServerMessage>(e.Data);
         if (_eventHandlers.ContainsKey(message.Type))
         {
