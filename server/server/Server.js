@@ -16,6 +16,10 @@ wss.on('connection', (ws) => {
 	const player = new Player();
 	const thisPlayerID = player.id;
 
+	player.position.x = Math.random() * 10 - 5; 
+	player.position.y = 1;                     
+	player.position.z = Math.random() * 10 - 5;
+
 	players[thisPlayerID] = player;
 	sockets[thisPlayerID] = ws;
 
@@ -25,17 +29,11 @@ wss.on('connection', (ws) => {
 
 	broadcast(createMessage('spawn', { player }), thisPlayerID);
 
-	for (let playerID in players) {
-		if (playerID !== thisPlayerID) {
-			ws.send(createMessage('spawn', { player: players[playerID] }));
-		}
-	}
-
 	ws.on('message', (message) => {
 		try {
 			let parsedMessage = JSON.parse(message);
 			let parsedData = JSON.parse(parsedMessage.Data);
-			
+
 			eventBus.emit(parsedMessage.Type, parsedData);
 		} catch (error) {
 			console.error('Failed to parse message:', error);
